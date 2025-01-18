@@ -1,0 +1,71 @@
+/* Animaciones específicas solo para el botón */
+@keyframes button-glitch {
+    0% {
+        transform: translate(0);
+    }
+
+    20% {
+        transform: translate(-3px, 2px);
+    }
+
+    40% {
+        transform: translate(3px, -2px);
+    }
+
+    60% {
+        transform: translate(-3px, -2px);
+    }
+
+    80% {
+        transform: translate(2px, 3px);
+    }
+
+    100% {
+        transform: translate(0);
+    }
+}
+
+.glitch-button {
+    background-color: #000000;
+    /* Color oscuro para simular estilo retro */
+    color: white;
+    font-size: 1.2rem;
+    padding: 10px 20px;
+    border: 2px solid #fff;
+    border-radius: 20px;
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+    text-transform: uppercase;
+}
+
+.glitch-button:hover {
+    animation: button-glitch 0.5s linear infinite;
+}
+
+/* Efectos específicos del glitch solo para el botón */
+.glitch-button::before {
+    content: '';
+    position: absolute;
+    top: -5px;
+    left: -5px;
+    right: -5px;
+    bottom: -5px;
+    background: rgba(255, 255, 255, 0.1);
+    mix-blend-mode: overlay;
+    z-index: 1;
+    animation: button-glitch 0.5s linear infinite;
+}
+
+.glitch-button::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.05);
+    z-index: 0;
+    opacity: 0.6;
+    pointer-events: none;
+}
