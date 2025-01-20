@@ -45,6 +45,14 @@ export default function Depositos() {
 
     const [projectName, setProjectName] = useState(''); // Estado para el nombre del proyecto
     const API_URL = import.meta.env.VITE_API_URL;
+    const [userRole, setUserRole] = useState('');
+
+    useEffect(() => {
+        const role = localStorage.getItem('role');
+        if (role) {
+            setUserRole(role);
+        }
+    }, []);
 
     // Fetch del nombre del proyecto
     useEffect(() => {
@@ -378,83 +386,97 @@ export default function Depositos() {
                         </div>
 
 
-                        <div className='flex flex-wrap gap-2 mb-2'>
-                            <button
-                                onClick={handleOpenAddModal}
-                                className="text-white bg-gradient-to-r from-green-400 via-green-500 to-green-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-green-300 dark:focus:ring-green-800 shadow-lg shadow-green-500/50 dark:shadow-lg dark:shadow-green-800/80 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-4"
-                            >
-                                Añadir Deposito
-                            </button>
-                            <button
-                                onClick={handleDownloadExcel}
-                                className="text-white bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 shadow-lg shadow-blue-500/50 dark:shadow-lg dark:shadow-blue-800/80 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-4 ml-auto"
-                            >
-                                Descargar Excel
-                            </button>
-                        </div>
+                        {userRole === 'admin' && (
+                            <div className='flex flex-wrap gap-2 mb-2'>
+                                <button
+                                    onClick={handleOpenAddModal}
+                                    className="text-white bg-gradient-to-r from-green-400 via-green-500 to-green-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-green-300 dark:focus:ring-green-800 shadow-lg shadow-green-500/50 dark:shadow-lg dark:shadow-green-800/80 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-4"
+                                >
+                                    Añadir Deposito
+                                </button>
+                                <button
+                                    onClick={handleDownloadExcel}
+                                    className="text-white bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 shadow-lg shadow-blue-500/50 dark:shadow-lg dark:shadow-blue-800/80 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-4 ml-auto"
+                                >
+                                    Descargar Excel
+                                </button>
+                            </div>
+                        )}
 
 
                         <div className="overflow-x-auto">
                             {/* Tabla */}
-                            <table className="min-w-full bg-white bg-opacity-75 border">
-                                <thead>
-                                    <tr className="bg-gray-200 text-gray-600 uppercase text-sm">
-                                        <th className="border px-4 py-2 text-center">Fecha</th>
-                                        <th className="border px-4 py-2 text-center">Descripción</th>
-                                        <th className="border px-4 py-2 text-center">Op Bancaria</th>
-                                        <th className="border px-4 py-2 text-center">Dinero</th>
-                                        <th className="border px-4 py-2 text-center">Acciones</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {lotes && lotes.length > 0 ? (
-                                        lotes.map((lote) => (
-                                            <tr key={lote.id}>
-                                                <td className="border px-4 py-2 text-center">{lote.fecha}</td>
-                                                <td className="border px-4 py-2 text-center">{lote.descripcion}</td>
-                                                <td className="border px-4 py-2 text-center">N° {lote.operacionesBancarias}</td>
-                                                <td className="border px-4 py-2 text-center">S/. {lote.dinero}</td>
-                                                <td className="border px-4 py-2 text-center">
-                                                    <div className="flex justify-center items-center">
-                                                        <FaRegEye
-                                                            onClick={() => handleOpenModal(lote)}
-                                                            aria-label="View details"
-                                                            className="cursor-pointer"
-                                                            size={20}
-                                                        />
-                                                    </div>
+                            {userRole === 'admin' && (
+                                <table className="min-w-full bg-white bg-opacity-75 border">
+                                    <thead>
+                                        <tr className="bg-gray-200 text-gray-600 uppercase text-sm">
+                                            <th className="border px-4 py-2 text-center">Fecha</th>
+                                            <th className="border px-4 py-2 text-center">Descripción</th>
+                                            <th className="border px-4 py-2 text-center">Op Bancaria</th>
+                                            <th className="border px-4 py-2 text-center">Dinero</th>
+                                            <th className="border px-4 py-2 text-center">Acciones</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {lotes && lotes.length > 0 ? (
+                                            lotes.map((lote) => (
+                                                <tr key={lote.id}>
+                                                    <td className="border px-4 py-2 text-center">{lote.fecha}</td>
+                                                    <td className="border px-4 py-2 text-center">{lote.descripcion}</td>
+                                                    <td className="border px-4 py-2 text-center">N° {lote.operacionesBancarias}</td>
+                                                    <td className="border px-4 py-2 text-center">S/. {lote.dinero}</td>
+                                                    <td className="border px-4 py-2 text-center">
+                                                        <div className="flex justify-center items-center">
+                                                            <FaRegEye
+                                                                onClick={() => handleOpenModal(lote)}
+                                                                aria-label="View details"
+                                                                className="cursor-pointer"
+                                                                size={20}
+                                                            />
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            ))
+                                        ) : (
+                                            <tr>
+                                                <td colSpan="8" className="text-center p-4">
+                                                    No se encontraron datos.
                                                 </td>
                                             </tr>
-                                        ))
-                                    ) : (
-                                        <tr>
-                                            <td colSpan="8" className="text-center p-4">
-                                                No se encontraron datos.
-                                            </td>
-                                        </tr>
-                                    )}
-                                </tbody>
-                            </table>
+                                        )}
+                                    </tbody>
+                                </table>
+                            )}
                         </div>
 
                         {/* Paginación */}
-                        <div className="flex justify-center mt-4">
-                            <button
-                                onClick={() => fetchLotes(currentPage - 1)}
-                                disabled={currentPage === 1}
-                                className="px-4 py-2 bg-gray-200 rounded disabled:opacity-50"
-                            >
-                                Anterior
-                            </button>
-                            <span className="px-4 py-2">{`Página ${currentPage} de ${totalPages}`}</span>
-                            <button
-                                onClick={() => fetchLotes(currentPage + 1)}
-                                disabled={currentPage === totalPages}
-                                className="px-4 py-2 bg-gray-200 rounded disabled:opacity-50"
-                            >
-                                Siguiente
-                            </button>
-                        </div>
+                        {userRole === 'admin' && (
+                            <div className="flex justify-center mt-4">
+                                <button
+                                    onClick={() => fetchLotes(currentPage - 1)}
+                                    disabled={currentPage === 1}
+                                    className="px-4 py-2 bg-gray-200 rounded disabled:opacity-50"
+                                >
+                                    Anterior
+                                </button>
+                                <span className="px-4 py-2">{`Página ${currentPage} de ${totalPages}`}</span>
+                                <button
+                                    onClick={() => fetchLotes(currentPage + 1)}
+                                    disabled={currentPage === totalPages}
+                                    className="px-4 py-2 bg-gray-200 rounded disabled:opacity-50"
+                                >
+                                    Siguiente
+                                </button>
+                            </div>
+                        )}
+                        {userRole !== 'admin' && (
+                            
+                            <div>
+                                <br />
+                                <h1 className='text-center font-mono'>No deverias estar Aquí</h1>
+                            </div>
+                        )}
+
 
                         <Modal
                             isOpen={isConfirmModalOpen}
@@ -501,10 +523,14 @@ export default function Depositos() {
                                                     type="date"
                                                     name="fecha"
                                                     placeholder="Fecha"
-                                                    value={selectedLote.fecha}
+                                                    value={selectedLote.fecha
+                                                        ? selectedLote.fecha.split('-').reverse().join('-')
+                                                        : ''}
                                                     onChange={handleInputChange}
                                                     className="w-full p-2 border rounded-md focus:outline-none focus:border-blue-500"
                                                 />
+
+
                                             </div>
 
                                             <div>

@@ -8,8 +8,9 @@ const navLinks = [
     { title: 'Inicio', url: '/' },
     { title: 'Proyectos', url: '/proyecto' },
     { title: 'Informes', url: '/Informes' },
-   // { title: 'Contactos', url: '/contactos' }
+  // { title: 'Panel', url: '/UsersControl' }
 ];
+
 
 
 
@@ -17,6 +18,7 @@ const Navbar = () => {
     const [isMobile, setIsMobile] = useState(window.innerWidth < 769);
     const [showModal, setShowModal] = useState(false);
     const [user, setUser] = useState({ firstName: '', lastName: '' });
+    
 
     useEffect(() => {
         const firstName = localStorage.getItem('firstName');

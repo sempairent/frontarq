@@ -11,6 +11,7 @@ import Depositos from './assets/paginas/Depositos';
 import Plano from './assets/paginas/Plano';
 import Informes from './assets/paginas/Informes';
 import Error from './assets/components/404/Error';
+import Users from './assets/paginas/Users';
 
 function App() {
 
@@ -31,6 +32,7 @@ function App() {
           <Route path="/Depositos/:proyectoId" element={<ProtectedRoute><Depositos/> </ProtectedRoute>} />
           <Route path="/Plano/:proyectoId" element={<ProtectedRoute><Plano/> </ProtectedRoute>} />
           <Route path="/Informes" element={<ProtectedRoute><Informes/> </ProtectedRoute>} />
+          <Route path="/UsersControl" element={<ProtectedRoute><Users/></ProtectedRoute>}/>
           <Route path='/perfil' element={
             <ProtectedRoute>
               <Perfil />

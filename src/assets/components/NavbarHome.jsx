@@ -8,7 +8,7 @@ const navLinks = [
     { title: 'Inicio', url: '/' },
     { title: 'Proyectos', url: '/proyecto' },
     { title: 'Informes', url: '/Informes' },
-   // { title: 'Contactos', url: '/contactos' }
+   //{ title: 'Panel', url: '/UsersControl' }
 ];
 
 const NavbarHome = () => {

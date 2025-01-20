@@ -7,11 +7,20 @@ import Title from '../components/Title';
 import FondoPaginas from '../components/fondospagina/FondoPaginas';
 import BackButton from '../components/button/BackButton';
 
+
 export default function Opciones() {
   const { id } = useParams();
   const proyectoId = id;
   const [proyecto, setProyecto] = useState(null); // Para almacenar los datos del proyecto
   const navigate = useNavigate();
+  const [userRole, setUserRole] = useState('');
+
+  useEffect(() => {
+      const role = localStorage.getItem('role');
+      if (role) {
+          setUserRole(role);
+      }
+  }, []); 
 
   const API_URL = import.meta.env.VITE_API_URL;
 
@@ -72,14 +81,17 @@ export default function Opciones() {
               </button>
 
               {/* Botón para depósitos */}
-              <button
-                className="w-full text-white bg-gradient-to-r from-teal-400 via-teal-500 to-teal-600 hover:bg-gradient-to-br 
-      focus:ring-4 focus:outline-none focus:ring-teal-300 dark:focus:ring-teal-800 shadow-lg shadow-teal-500/50 
-      dark:shadow-lg dark:shadow-teal-800/80 font-bold rounded-lg text-lg px-6 py-4"
-                onClick={() => navigate(`/Depositos/${proyectoId}`)}
-              >
-                Depósitos
-              </button>
+              {userRole === 'admin' && (
+                <button
+                  className="w-full text-white bg-gradient-to-r from-teal-400 via-teal-500 to-teal-600 hover:bg-gradient-to-br 
+focus:ring-4 focus:outline-none focus:ring-teal-300 dark:focus:ring-teal-800 shadow-lg shadow-teal-500/50 
+dark:shadow-lg dark:shadow-teal-800/80 font-bold rounded-lg text-lg px-6 py-4"
+                  onClick={() => navigate(`/Depositos/${proyectoId}`)}
+                >
+                  Depósitos
+                </button>
+              )}
+
 
               {/* Botón para Plano */}
               <button

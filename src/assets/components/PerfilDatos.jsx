@@ -7,6 +7,7 @@ import { fetchUserProfile, updateUserProfile } from '../../../public/apis/apiSer
 import ModalEditProfile from './ModalEditProfile.jsx';
 import 'react-toastify/dist/ReactToastify.css';
 import { AiOutlineUser, AiOutlineMail } from 'react-icons/ai';
+import { Link } from 'react-router-dom';
 
 export default function PerfilDatos() {
   const [userData, setUserData] = useState({
@@ -115,6 +116,15 @@ export default function PerfilDatos() {
                 >
                   Editar Perfil
                 </button>
+                )}
+                {userRole === 'admin' &&(
+                  <Link to='/UsersControl'>
+                  <button
+                  className="w-full sm:w-auto px-4 py-2 bg-gradient-to-r from-blue-700 to-cyan-500 text-white rounded-lg hover:from-blue-600 hover:to-cyan-600 transition duration-300 shadow-md"
+                >
+                  Panel de Control
+                </button>
+                  </Link>
                 )}
                 <button
                   onClick={handleLogout}

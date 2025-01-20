@@ -24,7 +24,7 @@ export default function LotesVendidos() {
     const [todo, setTodo] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
-    const [filters, setFilters] = useState({ dni: '', mzYLote: '', asesor: '',financiado: '' });
+    const [filters, setFilters] = useState({ dni: '', mzYLote: '', asesor: '', financiado: '' });
     const [debouncedFilters, setDebouncedFilters] = useState(filters);
     const [modalIsOpen, setModalIsOpen] = useState(false);
     const [addModalIsOpen, setAddModalIsOpen] = useState(false);
@@ -64,6 +64,14 @@ export default function LotesVendidos() {
 
     const closeConfirmModal = () => setIsConfirmModalOpen(false);
     const API_URL = import.meta.env.VITE_API_URL;
+    const [userRole, setUserRole] = useState('');
+
+    useEffect(() => {
+        const role = localStorage.getItem('role');
+        if (role) {
+            setUserRole(role);
+        }
+    }, []);
 
     const [projectName, setProjectName] = useState('');
     useEffect(() => {
@@ -443,10 +451,12 @@ export default function LotesVendidos() {
         const sortedData = [...todo].sort((a, b) => a.nombre.localeCompare(b.nombre));
 
         // Filtrar campos no deseados y formatear los valores monetarios
-        const filteredData = sortedData.map(({ id, proyectoId, adelanto, total, ...rest }) => ({
+        const filteredData = sortedData.map(({ id, proyectoId, adelanto, total, asesor, financiado, ...rest }) => ({
             ...rest,
             adelanto: adelanto ? `S/. ${adelanto}` : "S/. 0",
-            total: total ? `S/. ${total}` : "S/. 0"
+            total: total ? `S/. ${total}` : "S/. 0",
+            asesor,
+            financiado
         }));
 
         // Crear una hoja de trabajo
@@ -544,12 +554,14 @@ export default function LotesVendidos() {
                         </div>
 
                         <div className="flex flex-wrap gap-2 mb-2">
-                            <button
-                                onClick={handleOpenAddModal}
-                                className="text-white bg-gradient-to-r from-green-400 via-green-500 to-green-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-green-300 dark:focus:ring-green-800 shadow-lg shadow-green-500/50 dark:shadow-lg dark:shadow-green-800/80 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-4"
-                            >
-                                Añadir Lote
-                            </button>
+                            {userRole === 'admin' && (
+                                <button
+                                    onClick={handleOpenAddModal}
+                                    className="text-white bg-gradient-to-r from-green-400 via-green-500 to-green-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-green-300 dark:focus:ring-green-800 shadow-lg shadow-green-500/50 dark:shadow-lg dark:shadow-green-800/80 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-4"
+                                >
+                                    Añadir Lote
+                                </button>
+                            )}
                             <button
                                 onClick={handleDownloadExcel}
                                 className="text-white bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 shadow-lg shadow-blue-500/50 dark:shadow-lg dark:shadow-blue-800/80 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-4 ml-auto"
@@ -574,7 +586,9 @@ export default function LotesVendidos() {
                                         <th className="border px-4 py-2 text-center">Total</th>
                                         <th className="border px-4 py-2 text-center">Asesor</th>
                                         <th className="border px-4 py-2 text-center">Financiación</th>
-                                        <th className="border px-4 py-2 text-center">Acciones</th>
+                                        {userRole === 'admin' && (
+                                            <th className="border px-4 py-2 text-center">Acciones</th>
+                                        )}
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -594,16 +608,18 @@ export default function LotesVendidos() {
                                                         {lote.financiado}
                                                     </div>
                                                 </td>
-                                                <td className="border px-4 py-2 text-center">
-                                                    <div className="flex justify-center items-center">
-                                                        <FaRegEye
-                                                            onClick={() => handleOpenModal(lote)}
-                                                            aria-label="View details"
-                                                            className="cursor-pointer"
-                                                            size={20}
-                                                        />
-                                                    </div>
-                                                </td>
+                                                {userRole === 'admin' && (
+                                                    <td className="border px-4 py-2 text-center">
+                                                        <div className="flex justify-center items-center">
+                                                            <FaRegEye
+                                                                onClick={() => handleOpenModal(lote)}
+                                                                aria-label="View details"
+                                                                className="cursor-pointer"
+                                                                size={20}
+                                                            />
+                                                        </div>
+                                                    </td>
+                                                )}
                                             </tr>
                                         ))
                                     ) : (
