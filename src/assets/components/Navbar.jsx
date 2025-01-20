@@ -8,7 +8,7 @@ const navLinks = [
     { title: 'Inicio', url: '/' },
     { title: 'Proyectos', url: '/proyecto' },
     { title: 'Informes', url: '/Informes' },
-  // { title: 'Panel', url: '/UsersControl' }
+    { title: 'Plano', url: '/Plano/1' }
 ];
 
 
@@ -18,6 +18,15 @@ const Navbar = () => {
     const [isMobile, setIsMobile] = useState(window.innerWidth < 769);
     const [showModal, setShowModal] = useState(false);
     const [user, setUser] = useState({ firstName: '', lastName: '' });
+    const [userRole, setUserRole] = useState('');
+
+    useEffect(() => {
+        const role = localStorage.getItem('role');
+        
+        if (role) {
+            setUserRole(role);
+        }
+    }, []); 
     
 
     useEffect(() => {
@@ -61,6 +70,11 @@ const Navbar = () => {
                                 {link.title}
                             </Link>
                         ))}
+                        {userRole === 'admin' && (
+                                <Link to="/Depositos" className="text-white text-lg hover:underline" onClick={toggleModal}>
+                                    Depositos
+                                </Link>
+                            )}
                         <div className='flex items-center text-white gap-2 md:gap-4'>
                             <Link to="/perfil"> <FaUser className='text-lg md:text-xl' /></Link>
                             <div className='flex flex-col text-sm md:text-base'>
@@ -112,6 +126,11 @@ const Navbar = () => {
                                     {link.title}
                                 </Link>
                             ))}
+                            {userRole === 'admin' && (
+                                <Link to="/Depositos" className="text-white text-2xl font-light" onClick={toggleModal}>
+                                    Depositos
+                                </Link>
+                            )}
                         </div>
                     </div>
                 )}

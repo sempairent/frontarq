@@ -589,10 +589,11 @@ export default function LotesSeparados() {
                                         <th className="border px-4 py-2 text-center">Apellido</th>
                                         <th className="border px-4 py-2 text-center">Celular</th>
                                         <th className="border px-4 py-2 text-center">Mz y Lote</th>
-                                        <th className="border px-4 py-2 text-center">Financiación</th>
+                                        
                                         <th className="border px-4 py-2 text-center">Adelanto</th>
                                         <th className="border px-4 py-2 text-center">Total</th>
                                         <th className="border px-4 py-2 text-center">Asesor</th>
+                                        <th className="border px-4 py-2 text-center">Financiación</th>
                                         {userRole === 'admin' && (
                                             <th className="border px-4 py-2 text-center">Acciones</th>
                                         )}

@@ -18,6 +18,7 @@ const PlanoConPuntero = () => {
     const [isAddingPointer, setIsAddingPointer] = useState(false);
     const [imagenPlano, setImagenPlano] = useState('');
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
         fetchProyecto();
@@ -194,53 +195,48 @@ const PlanoConPuntero = () => {
         }
     };
     const exportToPDF = async () => {
+        setLoading(true); // Mostrar mensaje de carga
         const planoElement = document.getElementById('plano-con-punteros');
-      
+    
         try {
-            // Captura el contenido del plano usando html2canvas
+            // Captura el contenido del plano
             const canvas = await html2canvas(planoElement, {
                 useCORS: true,
-                scale: 5, // Aumenta el valor para mayor calidad
-                scrollY: -window.scrollY, // Captura contenido fuera del área visible
-                logging: false, // Desactiva los logs de html2canvas
+                scale: 2, 
+                scrollY: -window.scrollY,
+                logging: false,
             });
     
             const imgData = canvas.toDataURL('image/png');
-    
-            // Crear el PDF con el tamaño A4
             const pdf = new jsPDF({
-                orientation: 'landscape', // Formato apaisado (A4 landscape)
-                unit: 'mm', // Usamos milímetros para un control más preciso
-                format: 'a4', // Usamos el formato A4
+                orientation: 'landscape',
+                unit: 'mm',
+                format: [420, 297],
             });
     
-            const pageWidth = pdf.internal.pageSize.getWidth(); // Ancho de la página A4 en mm
-            const pageHeight = pdf.internal.pageSize.getHeight(); // Alto de la página A4 en mm
+            const pageWidth = pdf.internal.pageSize.getWidth();
+            const pageHeight = pdf.internal.pageSize.getHeight();
+            const imgWidth = canvas.width * 0.264583;
+            const imgHeight = canvas.height * 0.264583;
     
-            const imgWidth = canvas.width * 0.264583; // Convertir px a mm (1 px = 0.264583 mm)
-            const imgHeight = canvas.height * 0.264583; // Convertir px a mm (1 px = 0.264583 mm)
+            const scale = Math.min(pageWidth / imgWidth, pageHeight / imgHeight);
+            const scaledWidth = imgWidth * scale;
+            const scaledHeight = imgHeight * scale;
     
-            // Escalar la imagen para que se ajuste a la página sin perder partes
-            const scale = Math.min(pageWidth / imgWidth, pageHeight / imgHeight); // Ajuste para que quepa completamente
+            const xPosition = (pageWidth - scaledWidth) / 2;
+            const yPosition = (pageHeight - scaledHeight) / 2;
     
-            const scaledWidth = imgWidth * scale; // Ancho escalado
-            const scaledHeight = imgHeight * scale; // Alto escalado
-    
-            // Calcular la posición para centrar la imagen en la página
-            const xPosition = (pageWidth - scaledWidth) / 2; // Centrar horizontalmente
-            const yPosition = (pageHeight - scaledHeight) / 2; // Centrar verticalmente
-    
-            // Añadir la imagen al PDF, centrada
             pdf.addImage(imgData, 'PNG', xPosition, yPosition, scaledWidth, scaledHeight);
-    
-            // Guardar el PDF
             pdf.save('Plano.pdf');
         } catch (error) {
             console.error('Error exporting to PDF:', error);
+        } finally {
+            setLoading(false); // Ocultar mensaje de carga
         }
     };
     
-    
+
+
 
     const getMarkerColor = (estado) => {
         switch (estado) {
@@ -262,12 +258,27 @@ const PlanoConPuntero = () => {
         <>
             <Navbar />
             <div>
-            <button
-    onClick={exportToPDF}
-    className="fixed bottom-8 left-8 z-50 text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5"
->
-    Descargar PDF
-</button>
+                <br />
+                <div className='flex-grow flex justify-center'>
+                    <button
+                        onClick={exportToPDF}
+                        className="text-gray-900 bg-gradient-to-r from-teal-200 via-teal-400 to-teal-500 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-teal-300 dark:focus:ring-teal-800 shadow-lg shadow-teal-500/50 dark:shadow-lg dark:shadow-teal-800/80 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center"
+                    >
+                        Descargar PDF
+                    </button>
+                </div>
+                <br />
+                {/* Pantalla de carga */}
+                {loading && (
+                    <div className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 flex justify-center items-center z-50">
+                        <div className="text-white text-3xl">
+                            Espera, por favor...<br />
+                            Generando PDF...
+                        </div>
+                    </div>
+                )}
+
+
 
                 <div className="fixed bottom-8 right-8 z-50">
                     <button

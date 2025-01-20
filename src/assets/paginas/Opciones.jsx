@@ -80,7 +80,7 @@ export default function Opciones() {
                 Lotes Vendidos
               </button>
 
-              {/* Botón para depósitos */}
+              {/* Botón para depósitos 
               {userRole === 'admin' && (
                 <button
                   className="w-full text-white bg-gradient-to-r from-teal-400 via-teal-500 to-teal-600 hover:bg-gradient-to-br 
@@ -91,6 +91,7 @@ dark:shadow-lg dark:shadow-teal-800/80 font-bold rounded-lg text-lg px-6 py-4"
                   Depósitos
                 </button>
               )}
+              */}
 
 
               {/* Botón para Plano */}

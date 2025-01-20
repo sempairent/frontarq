@@ -29,7 +29,7 @@ function App() {
           <Route path="/opciones/:id" element={<ProtectedRoute><Opciones /></ProtectedRoute>} />
           <Route path="/LotesSeparados/:proyectoId" element={<ProtectedRoute><LotesSeparados /></ProtectedRoute>} />
           <Route path="/LotesVendidos/:proyectoId" element={<ProtectedRoute> <LotesVendidos/> </ProtectedRoute>} /> 
-          <Route path="/Depositos/:proyectoId" element={<ProtectedRoute><Depositos/> </ProtectedRoute>} />
+          <Route path="/Depositos" element={<ProtectedRoute><Depositos/> </ProtectedRoute>} />
           <Route path="/Plano/:proyectoId" element={<ProtectedRoute><Plano/> </ProtectedRoute>} />
           <Route path="/Informes" element={<ProtectedRoute><Informes/> </ProtectedRoute>} />
           <Route path="/UsersControl" element={<ProtectedRoute><Users/></ProtectedRoute>}/>

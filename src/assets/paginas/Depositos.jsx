@@ -17,7 +17,7 @@ import * as XLSX from 'xlsx';
 
 
 export default function Depositos() {
-    const { proyectoId } = useParams();
+    //const { proyectoId } = useParams();
     const [lotes, setLotes] = useState(undefined);
     const [todo, setTodo] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
@@ -31,6 +31,7 @@ export default function Depositos() {
         fecha: '',
         descripcion: '',
         operacionesBancarias: '',
+        arch: '',
         dinero: 0,
     });
 
@@ -55,6 +56,7 @@ export default function Depositos() {
     }, []);
 
     // Fetch del nombre del proyecto
+    /*
     useEffect(() => {
         const fetchProjectName = async () => {
             try {
@@ -76,6 +78,7 @@ export default function Depositos() {
 
         fetchProjectName();
     }, [proyectoId]);
+    */
 
     // Debounce para filtros
     useEffect(() => {
@@ -96,7 +99,7 @@ export default function Depositos() {
         try {
             const token = localStorage.getItem('token')
             const response = await fetch(
-                `${API_URL}/depositos/${proyectoId}?${query}`,
+                `${API_URL}/depositos?${query}`,
                 {
                     method: 'GET',
                     headers: {
@@ -123,7 +126,7 @@ export default function Depositos() {
 
         try {
             const response = await fetch(
-                `${API_URL}/todosd/${proyectoId}`, {
+                `${API_URL}/todosd`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -160,21 +163,27 @@ export default function Depositos() {
 
     const handleSaveChanges = async () => {
         if (!selectedLote) return;
-
+    
         try {
             const token = localStorage.getItem('token');
+    
+            const formattedLote = {
+                ...selectedLote,
+                fecha: selectedLote.fecha ? selectedLote.fecha.split('/').reverse().join('-') : '', // Convertir dd/MM/yyyy -> yyyy-MM-dd
+            };
+    
             const response = await fetch(`${API_URL}/depositos/${selectedLote.id}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${token}`
                 },
-                body: JSON.stringify(selectedLote),
+                body: JSON.stringify(formattedLote),
             });
-
+    
             if (!response.ok) throw new Error('Error al guardar los cambios.');
-            toast.success("Creado satisfactoriamente")
-
+            toast.success("Actualizado satisfactoriamente");
+    
             fetchLotes(currentPage); // Refresca los datos
             handleCloseModal();
         } catch (error) {
@@ -182,11 +191,16 @@ export default function Depositos() {
             alert('Error al guardar los cambios.');
         }
     };
+    
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
 
         let newValue = value;
+        if (name === 'fecha') {
+            const [day, month, year] = value.split('-'); // Suponiendo que el usuario ingresa dd-MM-yyyy
+            newValue = `${year}-${month}-${day}`; // Convertirlo a yyyy-MM-dd
+        }
         if (name === 'operacionesBancarias') {
             newValue = value.replace(/\D/g, ''); // Eliminar caracteres no numéricos
         }
@@ -227,27 +241,33 @@ export default function Depositos() {
             fecha: '',
             descripcion: '',
             operacionesBancarias: '',
+            arch: '',
             dinero: 0,
 
         });
     };
 
     const handleAddLote = async () => {
-
         try {
             const token = localStorage.getItem('token');
+    
+            const formattedLote = {
+                ...newLote,
+                fecha: newLote.fecha ? newLote.fecha.split('/').reverse().join('-') : '', // Convertir dd/MM/yyyy -> yyyy-MM-dd
+            };
+    
             const response = await fetch(`${API_URL}/depositos`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${token}`
                 },
-                body: JSON.stringify({ ...newLote, proyectoId: parseInt(proyectoId, 10) }),
+                body: JSON.stringify(formattedLote),
             });
-
+    
             if (!response.ok) throw new Error('Error al agregar el nuevo lote.');
-            toast.success("Creado satisfactoriamente")
-
+            toast.success("Creado satisfactoriamente");
+    
             fetchLotes(currentPage);
             handleCloseAddModal();
         } catch (error) {
@@ -255,6 +275,7 @@ export default function Depositos() {
             alert('Error al agregar el nuevo lote.');
         }
     };
+    
 
     const handleDeleteLote = async () => {
         if (!selectedLote) return;
@@ -282,10 +303,10 @@ export default function Depositos() {
 
     const handleDownloadExcel = () => {
         // Clonar y ordenar los datos por "tarea" alfabéticamente
-        const sortedData = [...todo].sort((a, b) => a.descripcion.localeCompare(b.descripcion));
+        const sortedData = [...todo].sort((a, b) => b.id - a.id);
 
         // Filtrar campos no deseados y formatear los valores monetarios
-        const filteredData = sortedData.map(({ id, proyectoId, operacionesBancarias, dinero, ...rest }) => ({
+        const filteredData = sortedData.map(({ id, operacionesBancarias, dinero, ...rest }) => ({
             ...rest,
             operacionesBancarias: operacionesBancarias ? `N° ${operacionesBancarias}` : "S/. 0",
             dinero: dinero ? `S/. ${dinero}` : "S/. 0"
@@ -330,7 +351,7 @@ export default function Depositos() {
 
                     <div className="container mx-auto">
                         {/*<h1 className="text-xl font-bold mb-4">Lotes Separados</h1> */}
-                        <Title>Depositos de {projectName || 'Cargando...'}</Title>
+                        <Title>Depositos </Title>
                         <div className='flex flex-grap justify-center items-center gap-4 mb-6'>
                             <div className="flex items-center space-x-2">
                                 <HiCreditCard size={24} className="text-green-600" />
@@ -413,6 +434,7 @@ export default function Depositos() {
                                             <th className="border px-4 py-2 text-center">Fecha</th>
                                             <th className="border px-4 py-2 text-center">Descripción</th>
                                             <th className="border px-4 py-2 text-center">Op Bancaria</th>
+                                            <th className="border px-4 py-2 text-center">Arch</th>
                                             <th className="border px-4 py-2 text-center">Dinero</th>
                                             <th className="border px-4 py-2 text-center">Acciones</th>
                                         </tr>
@@ -424,6 +446,7 @@ export default function Depositos() {
                                                     <td className="border px-4 py-2 text-center">{lote.fecha}</td>
                                                     <td className="border px-4 py-2 text-center">{lote.descripcion}</td>
                                                     <td className="border px-4 py-2 text-center">N° {lote.operacionesBancarias}</td>
+                                                    <td className="border px-4 py-2 text-center">N° {lote.arch}</td>
                                                     <td className="border px-4 py-2 text-center">S/. {lote.dinero}</td>
                                                     <td className="border px-4 py-2 text-center">
                                                         <div className="flex justify-center items-center">
@@ -470,7 +493,7 @@ export default function Depositos() {
                             </div>
                         )}
                         {userRole !== 'admin' && (
-                            
+
                             <div>
                                 <br />
                                 <h1 className='text-center font-mono'>No deverias estar Aquí</h1>
@@ -523,15 +546,12 @@ export default function Depositos() {
                                                     type="date"
                                                     name="fecha"
                                                     placeholder="Fecha"
-                                                    value={selectedLote.fecha
-                                                        ? selectedLote.fecha.split('-').reverse().join('-')
-                                                        : ''}
+                                                    value={selectedLote?.fecha?.substring(0, 10)}
                                                     onChange={handleInputChange}
                                                     className="w-full p-2 border rounded-md focus:outline-none focus:border-blue-500"
                                                 />
-
-
                                             </div>
+
 
                                             <div>
                                                 <label className="block text-sm font-medium">Tipo de Operación</label>
@@ -552,6 +572,17 @@ export default function Depositos() {
                                                     name="operacionesBancarias"
                                                     placeholder="N° op Bancaria"
                                                     value={selectedLote.operacionesBancarias}
+                                                    onChange={handleInputChange}
+                                                    className="w-full p-2 border rounded-md focus:outline-none focus:border-blue-500"
+                                                />
+                                            </div>
+                                            <div>
+                                                <label className="block text-sm font-medium">ARCH</label>
+                                                <input
+                                                    type="text"
+                                                    name="arch"
+                                                    placeholder="1"
+                                                    value={selectedLote.arch}
                                                     onChange={handleInputChange}
                                                     className="w-full p-2 border rounded-md focus:outline-none focus:border-blue-500"
                                                 />
@@ -631,6 +662,17 @@ export default function Depositos() {
                                                 placeholder="Descripcion"
                                                 value={newLote.descripcion}
                                                 onChange={(e) => setNewLote({ ...newLote, descripcion: e.target.value })}
+                                                className="w-full p-2 border rounded-md focus:outline-none focus:border-blue-500"
+                                            />
+                                        </div>
+                                        <div>
+                                            <label className="block text-sm font-medium">ARCH</label>
+                                            <input
+                                                type="text"
+                                                name="arch"
+                                                placeholder="1"
+                                                value={newLote.arch}
+                                                onChange={(e) => setNewLote({ ...newLote, arch: e.target.value })}
                                                 className="w-full p-2 border rounded-md focus:outline-none focus:border-blue-500"
                                             />
                                         </div>
