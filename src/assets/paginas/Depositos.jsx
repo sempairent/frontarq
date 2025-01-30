@@ -309,7 +309,7 @@ export default function Depositos() {
         const filteredData = sortedData.map(({ id, operacionesBancarias, dinero, ...rest }) => ({
             ...rest,
             operacionesBancarias: operacionesBancarias ? `N° ${operacionesBancarias}` : "S/. 0",
-            dinero: dinero ? `S/. ${dinero}` : "S/. 0"
+            dinero: dinero ? parseFloat(dinero) : 0,
         }));
 
         // Crear una hoja de trabajo
