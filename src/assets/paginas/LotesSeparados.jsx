@@ -460,8 +460,8 @@ export default function LotesSeparados() {
         // Filtrar campos no deseados y formatear los valores monetarios
         const filteredData = sortedData.map(({ id, proyectoId, adelanto, total, asesor, financiado, ...rest }) => ({
             ...rest,
-            adelanto: adelanto ? `S/. ${adelanto}` : "S/. 0",
-            total: total ? `S/. ${total}` : "S/. 0",
+            adelanto: adelanto ? parseFloat(adelanto) : 0, 
+            total: total ? parseFloat(total) : 0,
             asesor,
             financiado
         }));
@@ -589,7 +589,7 @@ export default function LotesSeparados() {
                                         <th className="border px-4 py-2 text-center">Apellido</th>
                                         <th className="border px-4 py-2 text-center">Celular</th>
                                         <th className="border px-4 py-2 text-center">Mz y Lote</th>
-                                        
+
                                         <th className="border px-4 py-2 text-center">Adelanto</th>
                                         <th className="border px-4 py-2 text-center">Total</th>
                                         <th className="border px-4 py-2 text-center">Asesor</th>
